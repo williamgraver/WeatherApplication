@@ -1,5 +1,6 @@
 package com.williamgraver.applicationmeteo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -8,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -16,11 +18,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 public class MainActivity extends AppCompatActivity {
 
     DrawerLayout drawer;
     NavigationView nv;
+    GoogleSignInAccount account = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,17 +41,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Intent t = getIntent();
+        account = t.getParcelableExtra("GoogleAccount");
         callWebService();
-
-
-        configureNavHeader(getIntent().getStringExtra("UserName"));
+        configureNavHeader(account, getIntent().getStringExtra("UserName"));
     }
 
 
-    public void configureNavHeader(String userName){
+    public void configureNavHeader(GoogleSignInAccount account, String userName){
         View viewheader = getLayoutInflater().inflate(R.layout.header_navigation,null);
+        ImageView image = (ImageView)viewheader.findViewById(R.id.imageuser);
         TextView textView =(TextView)viewheader.findViewById(R.id.nomUser);
-        textView.setText(userName);
+        if (account != null) {
+            textView.setText(account.getDisplayName());
+//            System.out.print("REGARDER MOI : " + account.getPhotoUrl());
+            Glide.with(this).load(account.getPhotoUrl()).into(image);
+        } else {
+            textView.setText(userName);
+            image.setImageResource(R.drawable.default_profile);
+        }
+
+
         nv.addHeaderView(viewheader);
     }
 
@@ -55,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
         drawer.closeDrawers();
         if(item.getItemId() == R.id.menu_forecast){
             System.out.print("TU VAS ME VOIR SINON JE VAIS MENENERVER");
+        } else if (item.getItemId() == R.id.disconnect){
+            Intent t = new Intent(this, LoginActivity.class);
+            t.putExtra("LogoutGoogle", account!=null);
+            startActivity(t);
         }
         return true;
     }

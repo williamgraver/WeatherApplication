@@ -22,14 +22,16 @@
         android:layout_marginLeft="16dp">
 
         <ImageView
+            android:id="@+id/imageuser"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:id="@+id/imageuser"/>
+            android:contentDescription="Profile Image " />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/nomUser"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:layout_width="347dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:textStyle="bold" />
     </LinearLayout>
 </RelativeLayout>
