@@ -1,5 +1,6 @@
 package com.williamgraver.applicationmeteo;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CityInfo {
@@ -7,7 +8,13 @@ public class CityInfo {
     double latitude, longitude,elevation;
 
 
-    public CityInfo(JSONObject jsonObject){
-
+    public CityInfo(JSONObject jsonObject) throws JSONException {
+        name = jsonObject.getString("name");
+        country = jsonObject.getString("country");
+        latitude = jsonObject.getDouble("latitude");
+        longitude = jsonObject.getDouble("longitude");
+        elevation = jsonObject.getDouble("elevation");
+        sunrise = jsonObject.getString("sunrise");
+        sunset = jsonObject.getString("sunset");
     }
 }

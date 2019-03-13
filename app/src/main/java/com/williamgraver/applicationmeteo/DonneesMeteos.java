@@ -13,6 +13,15 @@ public class DonneesMeteos {
         try {
             JSONObject jsonObject = new JSONObject(json);
 
+            cityInfo = new CityInfo(new JSONObject(jsonObject.getString("city_info")));
+            currentCondition = new CurrentCondition(new JSONObject(jsonObject.getString("current_condition")));
+            forecastInfo = new ForecastInfo(new JSONObject(jsonObject.getString("forecast_info")));
+
+            fcstDay_0 = new FcstDay(new JSONObject(jsonObject.getString("fcst_day_0")));
+            fcstDay_1 = new FcstDay(new JSONObject(jsonObject.getString("fcst_day_1")));
+            fcstDay_2 = new FcstDay(new JSONObject(jsonObject.getString("fcst_day_2")));
+            fcstDay_3 = new FcstDay(new JSONObject(jsonObject.getString("fcst_day_3")));
+            fcstDay_4 = new FcstDay(new JSONObject(jsonObject.getString("fcst_day_4")));
 
 
         } catch (JSONException e) {
