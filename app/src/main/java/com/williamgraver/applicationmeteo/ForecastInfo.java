@@ -6,9 +6,9 @@ import org.json.JSONObject;
 public class ForecastInfo {
     double latitude,longitude, elevation;
 
-    public  ForecastInfo(JSONObject jsonObject) throws JSONException {
-        latitude = jsonObject.getDouble("latitude");
-        longitude = jsonObject.getDouble("longitude");
-        elevation = jsonObject.getDouble("elevation");
+    public  ForecastInfo(JSONObject jsonObject)  {
+            latitude =  jsonObject.optDouble("latitude",0.0);
+            longitude = jsonObject.optDouble("longitude",0.0);
+            elevation = jsonObject.optDouble("elevation",0.0);
     }
 }

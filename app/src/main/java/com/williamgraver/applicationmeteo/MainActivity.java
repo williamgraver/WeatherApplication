@@ -3,6 +3,8 @@ package com.williamgraver.applicationmeteo;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +29,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         // Geolocalisation
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            callWebService(null, null);
+            callWebService(null);
         } else {
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -66,8 +72,22 @@ public class MainActivity extends AppCompatActivity {
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
+                                Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
+                                List<Address> addresses = null;
+                                try {
+                                    addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                                } catch (IOException e) {
+
+                                }
+                                if (addresses.size() > 0) {
+                                    System.out.println("City name : " + addresses.get(0).getLocality());
+                                    callWebService(addresses.get(0).getLocality());
+                                }
+                                else {
+                                    callWebService(null);
+                                }
                                 // Logic to handle location object
-                                callWebService((Double.toString(location.getLongitude())), Double.toString(location.getLatitude()));
+
                             }
                         }
                     });
@@ -83,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         TextView textView =(TextView)viewheader.findViewById(R.id.nomUser);
         if (account != null) {
             textView.setText(account.getDisplayName());
-//            System.out.print("REGARDER MOI : " + account.getPhotoUrl());
             Glide.with(this).load(account.getPhotoUrl()).into(image);
         } else {
             textView.setText(userName);
@@ -98,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         item.setChecked(true);
         drawer.closeDrawers();
         if(item.getItemId() == R.id.menu_forecast){
-            System.out.print("TU VAS ME VOIR SINON JE VAIS MENENERVER");
+
         } else if (item.getItemId() == R.id.disconnect){
             Intent t = new Intent(this, LoginActivity.class);
             t.putExtra("LogoutGoogle", account!=null);
@@ -116,10 +135,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void callWebService(String longitude, String latitude){
+    private void callWebService(String cityName){
         String url = "";
-        if ((longitude != null && longitude != null ) && (!longitude.isEmpty() && !longitude.isEmpty())){
-            url = "https://www.prevision-meteo.ch/services/json/lat="+latitude + "lng=" + longitude ;
+        if (cityName != null && !cityName.isEmpty()){
+            url = "https://www.prevision-meteo.ch/services/json/" + cityName ;
 
         } else {
             url= "https://www.prevision-meteo.ch/services/json/grenoble";
@@ -131,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         homeText.setText(response);
+                        DonneesMeteos data = new DonneesMeteos(response);
                     }
                 },
 

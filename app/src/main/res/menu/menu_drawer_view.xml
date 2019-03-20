@@ -5,13 +5,13 @@
         <item
             android:id="@+id/menu_forecast"
             android:icon="@drawable/ic_wb_sunny_black_24dp"
-            android:title="Météo" />
+            android:title="@string/weather_item" />
         <item
             android:id="@+id/menu_home"
             android:checkable="true"
             android:enabled="true"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="Accueil"
+            android:title="@string/accueil"
             android:visible="true">
 
         </item>
@@ -19,8 +19,8 @@
             android:id="@+id/disconnect"
             android:checkable="true"
             android:enabled="true"
-            android:icon="@drawable/ic_home_black_24dp"
-            android:title="Accueil"
+            android:icon="@drawable/ic_cancel_black_24dp"
+            android:title="@string/deconnexion"
             android:visible="true">
 
         </item>
