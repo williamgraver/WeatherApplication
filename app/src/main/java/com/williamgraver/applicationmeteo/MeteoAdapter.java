@@ -89,10 +89,6 @@ public class MeteoAdapter extends ArrayAdapter<FcstDay> {
             LinearLayoutManager layoutManager= new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(new HourAdapater(dayToShow.getHoursFrom(currentHour + 1)));
-//            adapter = new HourAdapater(context, 0);
-//            listDetail.setAdapter(adapter);
-//            adapter.addAll(dayToShow.getHoursFrom(currentHour));
-//            adapter.notifyDataSetChanged();
         } else{
 
 

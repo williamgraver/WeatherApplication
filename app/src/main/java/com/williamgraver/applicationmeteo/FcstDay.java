@@ -148,7 +148,7 @@ public class FcstDay implements Parcelable {
         parcel.writeString(condition_key);
         parcel.writeString(icon);
         parcel.writeString(icon_big);
-        parcel.writeTypedList(hours);
+        parcel.writeList(hours);
 
     }
 
@@ -176,6 +176,8 @@ public class FcstDay implements Parcelable {
         condition_key = in.readString();
         icon = in.readString();
         icon_big = in.readString();
+        hours = new ArrayList<>();
+        in.readList(hours, HourData.class.getClassLoader());
     }
 
     protected void getHours(JSONObject hourdata){

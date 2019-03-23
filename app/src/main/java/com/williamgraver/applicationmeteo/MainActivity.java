@@ -1,15 +1,21 @@
 package com.williamgraver.applicationmeteo;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -38,6 +44,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,11 +61,16 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<FcstDay> adapter;
     SwipeRefreshLayout refreshLayout;
     TextView activityTitleTV;
+    String currentCity ="Grenoble";
+    DonneesMeteos donnees;
+    final String CHANNEL_ID = "42";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
+        createNotificationChannel();
+
 
         setUpActionBar(getSupportActionBar());
         View actionBar = (View)findViewById(R.id.action_bar_container);
@@ -84,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
                 intent.putExtra("fcstDay", day);
+                DateFormat dateFormater = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+                intent.putExtra("DayName",dateFormater.format(day.getDate()));
                 startActivity(intent);
             }
         });
@@ -99,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 PopulateListItem();
+                if (donnees != null){
+                    manageNotifications();
+                }
             }
         });
 
@@ -106,8 +124,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 PopulateListItem();
+                if (donnees != null){
+                    manageNotifications();
+                }
+
             }
         }, 0);
+
+        // Notification management
+
+    }
+
+    private void manageNotifications() {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_cloud_blue_24dp)
+                .setContentTitle(currentCity + " : " + donnees.currentCondition.getTmp() +"°C")
+                .setContentText(donnees.currentCondition.condition)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setOngoing(true);
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        notificationManager.notify(512, builder.build());
     }
 
 
@@ -164,17 +200,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         //homeText.setText(response);
-                        DonneesMeteos data = new DonneesMeteos(response);
+                        donnees = new DonneesMeteos(response);
                         daysToShow.clear();
-                        daysToShow.add(data.currentCondition);
-                        daysToShow.add(data.fcstDay_0);
-                        daysToShow.add(data.fcstDay_1);
-                        daysToShow.add(data.fcstDay_2);
-                        daysToShow.add(data.fcstDay_3);
-                        daysToShow.add(data.fcstDay_4);
+                        daysToShow.add(donnees.currentCondition);
+                        daysToShow.add(donnees.fcstDay_0);
+                        daysToShow.add(donnees.fcstDay_1);
+                        daysToShow.add(donnees.fcstDay_2);
+                        daysToShow.add(donnees.fcstDay_3);
+                        daysToShow.add(donnees.fcstDay_4);
 
                         adapter.addAll(daysToShow);
-
+                        manageNotifications();
                     }
                 },
                 new Response.ErrorListener() {
@@ -211,9 +247,11 @@ public class MainActivity extends AppCompatActivity {
 
                                 }
                                 if (addresses.size() > 0) {
-                                    System.out.println("City name : " + addresses.get(0).getLocality());
-                                    activityTitleTV.setText( addresses.get(0).getLocality());
-                                    callWebService(addresses.get(0).getLocality());
+                                    currentCity=addresses.get(0).getLocality();
+                                    System.out.println("City name : " + currentCity);
+
+                                    activityTitleTV.setText( currentCity);
+                                    callWebService(currentCity);
                                 }
                                 else {
                                     callWebService(null);
@@ -261,6 +299,22 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setDisplayShowCustomEnabled(true);
     }
 
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 
 
 }

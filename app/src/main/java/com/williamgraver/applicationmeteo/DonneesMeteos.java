@@ -58,4 +58,6 @@ public class DonneesMeteos implements Parcelable {
             return new DonneesMeteos[size];
         }
     };
+
+
 }

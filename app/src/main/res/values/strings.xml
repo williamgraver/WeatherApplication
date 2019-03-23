@@ -18,4 +18,8 @@
     <string name="deconnexion">Deconnexion</string>
     <string name="accueil">Accueil</string>
     <string name="weather_item">Météo</string>
+    <string name="channel_name">Channel Name defaults</string>
+
+    <string name="channel_description">Channel default description</string>
+
 </resources>
