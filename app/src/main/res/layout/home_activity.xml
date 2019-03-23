@@ -12,20 +12,26 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textHomePage"
+        <android.support.v4.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            tools:text="Bonjour" />
+            android:layout_height="match_parent"
+            android:id="@+id/refreshlayout">
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/itemlist"></ListView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:visibility="visible"
+        app:contentInsetStartWithNavigation="0dp"
+
         app:menu="@menu/menu_drawer_view">
 
     </android.support.design.widget.NavigationView>
