@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class NotificationService extends Service {
+    // TODO : Demarrer l'activité Login quand on clique sur la notif
     public LocationManager locationManager;
     public Location previousBestLocation = null;
     private NotificationManager mNM;
@@ -44,6 +45,8 @@ public class NotificationService extends Service {
     String currentCity = "";
     DonneesMeteos donnees;
     private static final int TWO_MINUTES = 1000 * 60 * 2;
+    private static final int FIVE_MINUTES = 1000 * 60 * 5;
+    private static final int ONE_KILOMETER = 1000;
     private FusedLocationProviderClient fusedLocationClient;
     // Unique Identification Number for the Notification.
     // We use it on Notification start, and to cancel it.
@@ -69,8 +72,6 @@ public class NotificationService extends Service {
     public void onCreate() {
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        // Display a notification about us starting.  We put an icon in the status bar.
         createNotificationChannel();
     }
 
@@ -86,27 +87,18 @@ public class NotificationService extends Service {
         // Cancel the persistent notification.
         mNM.cancel(NOTIFICATION);
 
-        // Tell the user we stopped.
-
     }
-
-
-
-    // This is the object that receives interactions from clients.  See
-    // RemoteService for a more complete example.
-    private final IBinder mBinder = new LocalBinder();
 
     /**
      * Show a notification while this service is running.
      */
     private void showNotification() {
-        // In this sample, we'll use the same text for the ticker and the expanded notification
         if (donnees == null) return;
         CharSequence text = getText(R.string.service_started);
 
         // The PendingIntent to launch our activity if the user selects this notification
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, LoginActivity.class), 0);
 
         // Set the info for the views that show in the notification panel.
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
@@ -143,8 +135,8 @@ public class NotificationService extends Service {
             callWebService(null);
         } else { // Sinon
             LocationListener listener = new MyLocationListener();
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 0, listener);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 0, listener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, FIVE_MINUTES, ONE_KILOMETER, listener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, FIVE_MINUTES, ONE_KILOMETER, listener);
         }
     }
 
@@ -207,7 +199,7 @@ public class NotificationService extends Service {
         } else {
             url= "https://www.prevision-meteo.ch/services/json/grenoble";
         }
-        //final TextView homeText = (TextView)findViewById(R.id.textHomePage);
+
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -234,7 +226,6 @@ public class NotificationService extends Service {
     {
 
         public void onLocationChanged(final Location loc) {
-            Log.d("Bonjour", "Location changed");
             if (isBetterLocation(loc, previousBestLocation)) {
                 loc.getLatitude();
                 loc.getLongitude();
@@ -248,7 +239,6 @@ public class NotificationService extends Service {
                     previousBestLocation = loc;
 
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                     callWebService(null);
                 }

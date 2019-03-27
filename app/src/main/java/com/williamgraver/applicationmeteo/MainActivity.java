@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-
+    // TODO : Ajouter un LocationListener ???
     DrawerLayout drawer;
     NavigationView nv;
     GoogleSignInAccount account = null;
