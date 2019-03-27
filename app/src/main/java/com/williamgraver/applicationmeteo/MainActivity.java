@@ -64,14 +64,16 @@ public class MainActivity extends AppCompatActivity {
     String currentCity ="Grenoble";
     DonneesMeteos donnees;
     final String CHANNEL_ID = "42";
+    NotificationService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
-        createNotificationChannel();
+//        createNotificationChannel();
 
-
+        Intent serviceIntent = new Intent(this, NotificationService.class);
+        startService(serviceIntent);
         setUpActionBar(getSupportActionBar());
         View actionBar = (View)findViewById(R.id.action_bar_container);
         drawer = (DrawerLayout) findViewById(R.id.drawer);
@@ -115,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             public void onRefresh() {
                 PopulateListItem();
                 if (donnees != null){
-                    manageNotifications();
+//                    manageNotifications();
                 }
             }
         });
@@ -125,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 PopulateListItem();
                 if (donnees != null){
-                    manageNotifications();
+//                    manageNotifications();
                 }
 
             }
@@ -135,16 +137,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void manageNotifications() {
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_cloud_blue_24dp)
-                .setContentTitle(currentCity + " : " + donnees.currentCondition.getTmp() +"°C")
-                .setContentText(donnees.currentCondition.condition)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setOngoing(true);
-        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-        notificationManager.notify(512, builder.build());
-    }
+//    private void manageNotifications() {
+//        final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+//                .setSmallIcon(R.drawable.ic_cloud_blue_24dp)
+//                .setContentTitle(currentCity + " : " + donnees.currentCondition.getTmp() +"°C")
+//                .setContentText(donnees.currentCondition.condition)
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                .setOngoing(true);
+//        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+//        notificationManager.notify(512, builder.build());
+//    }
 
 
     public void configureNavHeader(GoogleSignInAccount account, String userName){
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                         daysToShow.add(donnees.fcstDay_4);
 
                         adapter.addAll(daysToShow);
-                        manageNotifications();
+//                        manageNotifications();
                     }
                 },
                 new Response.ErrorListener() {
@@ -248,6 +250,9 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 if (addresses.size() > 0) {
                                     currentCity=addresses.get(0).getLocality();
+                                    currentCity = currentCity.replace(" ", "-");
+                                    currentCity = currentCity.replace("'", "-");
+
                                     System.out.println("City name : " + currentCity);
 
                                     activityTitleTV.setText( currentCity);
@@ -299,22 +304,28 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setDisplayShowCustomEnabled(true);
     }
 
+    @Override
+    protected void onDestroy() {
 
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        super.onDestroy();
+
     }
+
+    //    private void createNotificationChannel() {
+//        // Create the NotificationChannel, but only on API 26+ because
+//        // the NotificationChannel class is new and not in the support library
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            CharSequence name = getString(R.string.channel_name);
+//            String description = getString(R.string.channel_description);
+//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+//            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+//            channel.setDescription(description);
+//            // Register the channel with the system; you can't change the importance
+//            // or other notification behaviors after this
+//            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+//            notificationManager.createNotificationChannel(channel);
+//        }
+//    }
 
 
 }

@@ -20,7 +20,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailsActivity"></activity>
+        <activity
+            android:name=".TestSwipe"
+            android:label="@string/title_activity_test_swipe"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".DetailsActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name">
@@ -32,7 +36,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="Main"></activity>
+            android:label="Main" />
+        <service android:name=".NotificationService" android:enabled="true" />
     </application>
 
 </manifest>

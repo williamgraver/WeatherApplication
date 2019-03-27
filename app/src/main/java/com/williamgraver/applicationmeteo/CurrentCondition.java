@@ -1,5 +1,7 @@
 package com.williamgraver.applicationmeteo;
 
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,7 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class CurrentCondition extends FcstDay{
+public class CurrentCondition extends FcstDay implements Parcelable {
     Date date;
     String hour, tmp, wnd_spd, wnd_gust, wnd_dir, pressure, humidity;
 

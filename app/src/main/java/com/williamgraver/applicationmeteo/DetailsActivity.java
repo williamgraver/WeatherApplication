@@ -66,7 +66,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        finishActivity(0);
+        finish();
     }
 //    public boolean onOptionsItemSelected(boolean test) {
 //        finish();
