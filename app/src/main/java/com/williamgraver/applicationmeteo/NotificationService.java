@@ -79,7 +79,7 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         getLocation();
         showNotification();
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     @Override
@@ -135,8 +135,8 @@ public class NotificationService extends Service {
             callWebService(null);
         } else { // Sinon
             LocationListener listener = new MyLocationListener();
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, FIVE_MINUTES, ONE_KILOMETER, listener);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, FIVE_MINUTES, ONE_KILOMETER, listener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, FIVE_MINUTES, 0, listener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, FIVE_MINUTES, 0, listener);
         }
     }
 
