@@ -18,14 +18,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:text="test"/>
+        android:gravity="center"/>
 
     <TextView
         android:id="@+id/weatherdate"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:gravity="center"
-        android:text="test" />
+        android:layout_height="wrap_content" android:gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,14 +33,12 @@
         <TextView
             android:id="@+id/lowertemperature"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="test" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/uppertemperature"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" test" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
@@ -53,7 +49,7 @@
             android:id="@+id/windimage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Wind Icon"
+            android:contentDescription="@string/wind_icon"
             android:visibility="gone"
             tools:srcCompat="@drawable/ic_arrow_upward_black_24dp" />
 

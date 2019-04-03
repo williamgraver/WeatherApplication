@@ -20,13 +20,13 @@ public class CurrentCondition extends FcstDay implements Parcelable {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        hour = jsonObject.getString("hour");
-        tmp = jsonObject.getString("tmp");
-        wnd_spd = jsonObject.getString("wnd_spd");
-        wnd_gust = jsonObject.getString("wnd_gust");
-        wnd_dir = jsonObject.getString("wnd_dir");
-        pressure = jsonObject.getString("pressure");
-        humidity = jsonObject.getString("humidity");
+        hour = jsonObject.optString("hour");
+        tmp = jsonObject.optString("tmp");
+        wnd_spd = jsonObject.optString("wnd_spd");
+        wnd_gust = jsonObject.optString("wnd_gust");
+        wnd_dir = jsonObject.optString("wnd_dir");
+        pressure = jsonObject.optString("pressure");
+        humidity = jsonObject.optString("humidity");
 
 
     }

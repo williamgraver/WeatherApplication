@@ -50,7 +50,7 @@
             android:id="@+id/windimage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Wind Icon"
+            android:contentDescription="@string/wind_icon"
             android:visibility="gone"
             tools:srcCompat="@drawable/wind" />
 

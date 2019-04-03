@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-    // TODO : Ajouter un LocationListener ???
     DrawerLayout drawer;
     NavigationView nv;
     GoogleSignInAccount account = null;
@@ -196,23 +195,32 @@ public class MainActivity extends AppCompatActivity {
             url= "https://www.prevision-meteo.ch/services/json/grenoble";
         }
         //final TextView homeText = (TextView)findViewById(R.id.textHomePage);
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest request = new StringRequest(Request.Method.GET, url,
+        final RequestQueue queue = Volley.newRequestQueue(this);
+        final StringRequest request = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         //homeText.setText(response);
-                        donnees = new DonneesMeteos(response);
-                        daysToShow.clear();
-                        daysToShow.add(donnees.currentCondition);
-                        daysToShow.add(donnees.fcstDay_0);
-                        daysToShow.add(donnees.fcstDay_1);
-                        daysToShow.add(donnees.fcstDay_2);
-                        daysToShow.add(donnees.fcstDay_3);
-                        daysToShow.add(donnees.fcstDay_4);
+                        //response.contains()
+                        if(response.contains("errors") && response.contains("11")){
+                            createNewRequest();
+                        } else{
+                            donnees = new DonneesMeteos(response);
+                            daysToShow.clear();
+                            daysToShow.add(donnees.currentCondition);
+                            daysToShow.add(donnees.fcstDay_0);
+                            daysToShow.add(donnees.fcstDay_1);
+                            daysToShow.add(donnees.fcstDay_2);
+                            daysToShow.add(donnees.fcstDay_3);
+                            daysToShow.add(donnees.fcstDay_4);
 
-                        adapter.addAll(daysToShow);
-//                        manageNotifications();
+                            adapter.addAll(daysToShow);
+                        }
+                    }
+
+                    public void createNewRequest(){
+//                        StringRequest
+//                        queue.add(new StringRequest())
                     }
                 },
                 new Response.ErrorListener() {
@@ -248,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                                 } catch (IOException e) {
 
                                 }
-                                if (addresses.size() > 0) {
+                                if (addresses != null && addresses.size() > 0) {
                                     currentCity=addresses.get(0).getLocality();
                                     currentCity = currentCity.replace(" ", "-");
                                     currentCity = currentCity.replace("'", "-");
@@ -259,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                                     callWebService(currentCity);
                                 }
                                 else {
+                                    currentCity = "Grenoble";
                                     callWebService(null);
                                 }
                             }
@@ -311,21 +320,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //    private void createNotificationChannel() {
-//        // Create the NotificationChannel, but only on API 26+ because
-//        // the NotificationChannel class is new and not in the support library
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            CharSequence name = getString(R.string.channel_name);
-//            String description = getString(R.string.channel_description);
-//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-//            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-//            channel.setDescription(description);
-//            // Register the channel with the system; you can't change the importance
-//            // or other notification behaviors after this
-//            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-//            notificationManager.createNotificationChannel(channel);
-//        }
-//    }
 
 
 }

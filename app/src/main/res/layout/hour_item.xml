@@ -8,8 +8,7 @@
     <TextView
         android:id="@+id/hourTv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="132" />
+        android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/conditionImg"
@@ -21,8 +20,7 @@
     <TextView
         android:id="@+id/temperatureDetail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:layout_width="match_parent"

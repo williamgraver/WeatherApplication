@@ -79,7 +79,7 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         getLocation();
         showNotification();
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override

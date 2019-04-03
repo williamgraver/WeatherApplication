@@ -19,7 +19,7 @@
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/itemlist"></ListView>
+                android:id="@+id/itemlist"/>
 
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>

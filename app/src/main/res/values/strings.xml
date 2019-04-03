@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ApplicationMeteo</string>
+    <string name="app_name">Météo</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -27,6 +27,9 @@
     <string name="service_started">512445</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="wind_icon">Wind Icon</string>
+    <string name="profile_image">Profile Image</string>
+    <string name="description_weather_pic">Image de pluie</string>
 
 
 </resources>
