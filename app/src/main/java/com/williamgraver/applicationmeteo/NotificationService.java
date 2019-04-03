@@ -19,8 +19,10 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.JobIntentService;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -36,7 +38,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import java.util.List;
 import java.util.Locale;
 
-public class NotificationService extends Service {
+public class NotificationService extends JobIntentService {
     // TODO : Demarrer l'activité Login quand on clique sur la notif
     public LocationManager locationManager;
     public Location previousBestLocation = null;
@@ -87,6 +89,12 @@ public class NotificationService extends Service {
         // Cancel the persistent notification.
         mNM.cancel(NOTIFICATION);
 
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        getLocation();
+        showNotification();
     }
 
     /**

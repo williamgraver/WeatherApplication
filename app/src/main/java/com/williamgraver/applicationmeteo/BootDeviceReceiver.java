@@ -29,7 +29,9 @@ public class BootDeviceReceiver extends BroadcastReceiver {
         {
             //startServiceDirectly(context);
 
-            startServiceByAlarm(context);
+            startServiceByAlarm(context, NotificationService.class);
+            //startServiceByAlarm(context, MeteoWidget.WidgetService.class);
+
         }
     }
 
@@ -59,17 +61,15 @@ public class BootDeviceReceiver extends BroadcastReceiver {
 
     /* Create an repeat Alarm that will invoke the background service for each execution time.
      * The interval time can be specified by your self.  */
-    private void startServiceByAlarm(Context context)
+    private void startServiceByAlarm(Context context, Class c)
     {
         // Get alarm manager.
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
         // Create intent to invoke the background service.
-        Intent intent = new Intent(context, NotificationService.class);
+        Intent intent = new Intent(context, c);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent intent2 = new Intent(context, MeteoWidget.WidgetService.class);
-        PendingIntent pendingIntent2 = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long startTime = System.currentTimeMillis();
         long intervalTime = 60*1000*5;
@@ -82,7 +82,6 @@ public class BootDeviceReceiver extends BroadcastReceiver {
 
         // Create repeat alarm.
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, intervalTime, pendingIntent);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, intervalTime, pendingIntent2);
 
     }
 }

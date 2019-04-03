@@ -3,6 +3,9 @@ package com.williamgraver.applicationmeteo;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -29,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -72,7 +76,18 @@ public class MainActivity extends AppCompatActivity {
 //        createNotificationChannel();
 
         Intent serviceIntent = new Intent(this, NotificationService.class);
-        startService(serviceIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startService(serviceIntent);
+//            ComponentName thisWidget=new ComponentName(this, MeteoWidget.class);
+//            int []allWidgetIds=AppWidgetManager.getInstance(this).getAppWidgetIds(thisWidget);
+//
+//            //built intent to call service
+//            Intent intent=new Intent(this.getApplicationContext(), MeteoWidget.WidgetService.class);
+//            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,allWidgetIds);
+//            startForegroundService(intent);
+        } else{
+            startService(serviceIntent);
+        }
         setUpActionBar(getSupportActionBar());
         View actionBar = (View)findViewById(R.id.action_bar_container);
         drawer = (DrawerLayout) findViewById(R.id.drawer);
@@ -136,16 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    private void manageNotifications() {
-//        final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-//                .setSmallIcon(R.drawable.ic_cloud_blue_24dp)
-//                .setContentTitle(currentCity + " : " + donnees.currentCondition.getTmp() +"°C")
-//                .setContentText(donnees.currentCondition.condition)
-//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//                .setOngoing(true);
-//        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-//        notificationManager.notify(512, builder.build());
-//    }
+
 
 
     public void configureNavHeader(GoogleSignInAccount account, String userName){
