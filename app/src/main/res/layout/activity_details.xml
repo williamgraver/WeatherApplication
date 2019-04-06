@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".DetailsActivity"
     android:orientation="vertical">
-
+    <Space
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
     <ImageView
         android:id="@+id/weatherimage"
         android:layout_width="100dp"

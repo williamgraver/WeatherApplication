@@ -17,6 +17,8 @@
     <string name="server_client_id">836925995252-f62jd11h3hu4sr4eqjr6cn9utnsr6sci.apps.googleusercontent.com</string>
     <string name="deconnexion">Deconnexion</string>
     <string name="accueil">Accueil</string>
+    <string name="addCity">Ajouter</string>
+
     <string name="weather_item">Météo</string>
     <string name="channel_name">Channel Name defaults</string>
 

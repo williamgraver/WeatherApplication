@@ -1,38 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/action_bar_container"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/screen"
+android:layout_width="fill_parent" android:layout_height="fill_parent"
+android:orientation="vertical">
+<TextView
+    android:id="@+id/custom_actionbar_titleText_tv"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:orientation="horizontal">
+    android:layout_centerHorizontal="true"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:textColor="#ffffff"
+    android:text="Some text" />
 
+<ImageView
+    android:id="@+id/custom_actionbar_back_iv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentRight="true"
 
-    <ImageView
-        android:id="@+id/custom_actionbar_back_iv"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:gravity="left"
-        android:src="@drawable/ic_reorder_white_24dp" />
+    android:src="@drawable/ic_reorder_white_24dp" />
 
-    <TextView
-        android:id="@+id/custom_actionbar_titleText_tv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:text="Bonjour"
-        android:textAlignment="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/wallet_bright_foreground_holo_dark" />
-
-    <!--<ImageButton-->
-    <!--android:id="@+id/custom_actionbar_goToArchiveActivity_ib"-->
-    <!--android:layout_alignParentRight="true"-->
-    <!--android:layout_centerVertical="true"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_marginRight="0dp"-->
-    <!--android:background="@null"-->
-    <!--/>-->
-
-</LinearLayout>
+</RelativeLayout>
