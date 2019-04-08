@@ -15,10 +15,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.JobIntentService;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -57,11 +60,15 @@ public class MeteoWidget extends AppWidgetProvider {
         //built intent to call service
         Intent intent=new Intent(context.getApplicationContext(),WidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,allWidgetIds);
-        intent.putExtra("WidgetId", appWidgetId);
-        Log.i("LOG","before service");
+        //intent.putExtra("WidgetId", appWidgetId);
+        Log.w("LOG","before service");
         //update widget via service
-        context.startService(intent);
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startService(intent);
+        } else{
+            context.startService(intent);
+        }
+        //appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
@@ -72,11 +79,19 @@ public class MeteoWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(c, appWidgetManager, appWidgetId, donneesMeteos);
         }
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
     @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+    }
+
+
+    @Override
     public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
+        ComponentName thisWidget=new ComponentName(context, MeteoWidget.class);
+        onUpdate(context, AppWidgetManager.getInstance(context), AppWidgetManager.getInstance(context).getAppWidgetIds(thisWidget));
     }
 
     @Override
@@ -85,11 +100,9 @@ public class MeteoWidget extends AppWidgetProvider {
     }
 
 
-    public static class WidgetService extends Service {
+    public static class WidgetService extends JobIntentService{
         public LocationManager locationManager;
         public Location previousBestLocation = null;
-        private NotificationManager mNM;
-        final String CHANNEL_ID = "42";
         String currentCity = "";
         DonneesMeteos donnees;
         private static final int ONE_MINUTES = 1000 * 30 * 1;
@@ -98,7 +111,6 @@ public class MeteoWidget extends AppWidgetProvider {
         private FusedLocationProviderClient fusedLocationClient;
         // Unique Identification Number for the Notification.
         // We use it on Notification start, and to cancel it.
-        private int NOTIFICATION = R.string.service_started;
         AppWidgetManager appWidgetManager;
 
 
@@ -122,15 +134,19 @@ public class MeteoWidget extends AppWidgetProvider {
 
         @Override
         public void onCreate() {
-            mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         }
 
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
             getLocation();
+            ComponentName thisWidget=new ComponentName(this, MeteoWidget.class);
             appWidgetManager=AppWidgetManager.getInstance(this.getApplicationContext());
             allWidgetIds=intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+            if (allWidgetIds == null){
+                allWidgetIds=AppWidgetManager.getInstance(this.getApplicationContext()).getAppWidgetIds(thisWidget);
+            }
+
             Integer widgetID = intent.getIntExtra("WidgetId",0);
 
             super.onStart(intent, startId);
@@ -141,7 +157,15 @@ public class MeteoWidget extends AppWidgetProvider {
         @Override
         public void onDestroy() {
             // Cancel the persistent notification.
-            mNM.cancel(NOTIFICATION);
+
+        }
+
+        @Override
+        protected void onHandleWork(@NonNull Intent intent) {
+            getLocation();
+            appWidgetManager=AppWidgetManager.getInstance(this.getApplicationContext());
+            allWidgetIds=intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+            Log.w("WARN", "Dans le onHandleWork");
 
         }
 
@@ -149,32 +173,33 @@ public class MeteoWidget extends AppWidgetProvider {
             ComponentName thisWidget=new ComponentName(getApplicationContext(),MeteoWidget.class);
             int []allWidgetIds2=appWidgetManager.getAppWidgetIds(thisWidget);
 
-            Log.i("LOG","From Intent" + String.valueOf(allWidgetIds.length));
-            Log.i("LOG","Direct" + String.valueOf(allWidgetIds2.length));
+            Log.w("Widget","Trying to update Widget");
 
 
+            if (allWidgetIds !=null){
+                Log.w("LOG","From Intent" + String.valueOf(allWidgetIds.length));
+                for(int widgetId:allWidgetIds){
+                    RemoteViews views = new RemoteViews(getApplicationContext().getPackageName(), R.layout.meteo_widget);
+                    if (donnees != null) {
+                        AppWidgetTarget awt = new AppWidgetTarget(getApplicationContext(),  views, R.id.imageView2, widgetId);
+                        Glide.with(this).load(donnees.currentCondition.icon).asBitmap().into(awt);
+                        views.setTextViewText(R.id.text_widget_city_name, currentCity);
+                        views.setTextViewText(R.id.conditions, donnees.currentCondition.condition);
+                        views.setTextViewText(R.id.temperature_widget, donnees.currentCondition.tmp + "°C ");
+                        views.setTextViewText(R.id.updateTime, String.valueOf(new Date().getHours()) +"h "+  String.valueOf(new Date().getMinutes()));
 
-            for(int widgetId:allWidgetIds){
 
-                RemoteViews views = new RemoteViews(getApplicationContext().getPackageName(), R.layout.meteo_widget);
-                if (donnees != null) {
-                    AppWidgetTarget awt = new AppWidgetTarget(getApplicationContext(),  views, R.id.imageView2, widgetId);
-                    Glide.with(this).load(donnees.currentCondition.icon).asBitmap().into(awt);
-                    views.setTextViewText(R.id.text_widget_city_name, currentCity);
-                    views.setTextViewText(R.id.conditions, donnees.currentCondition.condition);
-                    views.setTextViewText(R.id.temperature_widget, donnees.currentCondition.tmp + "°C ");
-                    views.setTextViewText(R.id.updateTime, String.valueOf(new Date().getHours()) +"h "+  String.valueOf(new Date().getMinutes()));
+                        Log.w("LOG","We have the city info " + currentCity);
+                    }
+                    else{
+                        views.setTextViewText(R.id.text_widget_city_name,"wait till data load");
+                    }
 
-
-                    Log.i("LOG","We have the city info " + currentCity);
+                    pushWidgetUpdate(getApplicationContext(), views);
+                    //}
                 }
-                else{
-                    views.setTextViewText(R.id.text_widget_city_name,"wait till data load");
-                }
-
-                pushWidgetUpdate(getApplicationContext(), views);
-                //}
             }
+
         }
 
         public static void pushWidgetUpdate(Context context, RemoteViews rv) {

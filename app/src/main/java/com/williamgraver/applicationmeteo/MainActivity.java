@@ -1,7 +1,6 @@
 package com.williamgraver.applicationmeteo;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -94,13 +93,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
-        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.actionbar);
-        //getSupportActionBar().setElevation(0);
-
 //        createNotificationChannel();
 
         Intent serviceIntent = new Intent(this, NotificationService.class);
-        startService(serviceIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startService(serviceIntent);
+//            ComponentName thisWidget=new ComponentName(this, MeteoWidget.class);
+//            int []allWidgetIds=AppWidgetManager.getInstance(this).getAppWidgetIds(thisWidget);
+//
+//            //built intent to call service
+//            Intent intent=new Intent(this.getApplicationContext(), MeteoWidget.WidgetService.class);
+//            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,allWidgetIds);
+//            startForegroundService(intent);
+        } else{
+            startService(serviceIntent);
+        }
         setUpActionBar(getSupportActionBar());
         View actionBar = (View)findViewById(R.id.action_bar_container);
         drawer = (DrawerLayout) findViewById(R.id.drawer);
@@ -130,8 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("fcstDay", day);
                 DateFormat dateFormater = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
                 intent.putExtra("DayName",dateFormater.format(day.getDate()));
-                intent.putExtra("cityName", day);
-
                 startActivity(intent);
             }
         });
@@ -141,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
         account = t.getParcelableExtra("GoogleAccount");
         configureNavHeader(account, getIntent().getStringExtra("UserName"));
 
-
         // refresher
         refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshlayout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -150,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 PopulateListItem(currentCity);
                 if (donnees != null){
 //                    manageNotifications();
-
                 }
             }
         });
@@ -158,15 +161,15 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                PopulateListItem("");
+                PopulateListItem(currentCity);
                 if (donnees != null){
 //                    manageNotifications();
-
                 }
 
             }
         }, 0);
 
+        // Notification management
 
     }
 
@@ -326,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                                         currentCity = currentCity.replace(" ", "-");
                                         currentCity = currentCity.replace("'", "-");
 
-                                        System.out.println("City name : " + currentCity);
+                                    System.out.println("City name : " + currentCity);
 
                                         activityTitleTV.setText(currentCity);
                                         callWebService(currentCity);
@@ -363,7 +366,6 @@ public class MainActivity extends AppCompatActivity {
 
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         View customActionBarView = layoutInflater.inflate(R.layout.actionbar, null);
-
 
 
         // this view is used to show tile
