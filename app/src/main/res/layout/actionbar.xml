@@ -11,13 +11,34 @@ android:orientation="vertical">
     android:textColor="#ffffff"
     android:text="Some text" />
 
-<ImageView
+    <ImageView
     android:id="@+id/custom_actionbar_back_iv"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
-    android:layout_alignParentRight="true"
-
+    android:layout_alignParentLeft="true"
     android:src="@drawable/ic_reorder_white_24dp" />
 
+    <ImageView
+        android:id="@+id/add_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:src="@drawable/ic_add_black_24dp" />
+
+
+    <ImageView
+        android:id="@+id/switch_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/add_city"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="false"
+        android:layout_centerHorizontal="false"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="30dp"
+        android:src="@drawable/ic_more_vert_black_24dp" />
 </RelativeLayout>

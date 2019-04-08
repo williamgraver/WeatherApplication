@@ -32,6 +32,8 @@ public class DetailsActivity extends AppCompatActivity {
         Intent t= getIntent();
         FcstDay day = (FcstDay)t.getParcelableExtra("fcstDay");
         String currentDay = t.getStringExtra("DayName");
+        String cityName = t.getStringExtra("cityName");
+
 
         // JOURS ET DATE
         TextView tvDay = (TextView)findViewById(R.id.weatherday);

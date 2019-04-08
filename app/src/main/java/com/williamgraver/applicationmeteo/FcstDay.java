@@ -119,6 +119,10 @@ public class FcstDay implements Parcelable {
             condition_key = jsonObject.optString("condition_key");
             icon = jsonObject.optString("icon");
             icon_big = jsonObject.optString("icon_big");
+            System.out.println("====================> ********$$$$$$");
+            System.out.println(jsonObject);
+
+
             if(!(this instanceof CurrentCondition)){
                 hours = new ArrayList<>();
                 getHours(new JSONObject(jsonObject.getString("hourly_data")));

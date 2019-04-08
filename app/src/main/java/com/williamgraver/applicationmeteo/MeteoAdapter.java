@@ -53,7 +53,6 @@ public class MeteoAdapter extends ArrayAdapter<FcstDay> {
         return fcstDays.get(position);
     }
 
-
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         // retourne null dans le cas du currentCondition
@@ -72,7 +71,7 @@ public class MeteoAdapter extends ArrayAdapter<FcstDay> {
             ListView listDetail = (ListView)rowView.findViewById(R.id.detailList);
             CurrentCondition currentCondition =(CurrentCondition) getItem(0);
 
-            tvConditions.setText(currentCondition.condition);
+            tvConditions.setText(currentCondition.condition);//currentCondition.icon_big);//
             tvTemperature.setText("Temperature : " + currentCondition.tmp + "°C");
             Glide.with(context).load(currentCondition.icon_big).into(weatherImage);
             Integer currentHour = new Date().getHours();

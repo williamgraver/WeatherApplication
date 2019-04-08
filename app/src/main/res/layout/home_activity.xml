@@ -20,7 +20,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/itemlist"/>
-
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 
@@ -31,8 +30,6 @@
         android:layout_gravity="start"
         android:visibility="visible"
         app:contentInsetStartWithNavigation="0dp"
-
         app:menu="@menu/menu_drawer_view">
-
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

@@ -1,13 +1,17 @@
 package com.williamgraver.applicationmeteo;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,15 +25,22 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,11 +50,22 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,11 +86,17 @@ public class MainActivity extends AppCompatActivity {
     DonneesMeteos donnees;
     final String CHANNEL_ID = "42";
     NotificationService service;
+    String[] cities = new String[]{};
+    Button button;
+    PopupMenu popup = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
+        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.actionbar);
+        //getSupportActionBar().setElevation(0);
+
 //        createNotificationChannel();
 
         Intent serviceIntent = new Intent(this, NotificationService.class);
@@ -85,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        getCITYES();
+
 
         // gestion de la liste view
         adapter = new MeteoAdapter(this, 0);
@@ -100,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("fcstDay", day);
                 DateFormat dateFormater = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
                 intent.putExtra("DayName",dateFormater.format(day.getDate()));
+                intent.putExtra("cityName", day);
+
                 startActivity(intent);
             }
         });
@@ -109,14 +141,16 @@ public class MainActivity extends AppCompatActivity {
         account = t.getParcelableExtra("GoogleAccount");
         configureNavHeader(account, getIntent().getStringExtra("UserName"));
 
+
         // refresher
         refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshlayout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                PopulateListItem();
+                PopulateListItem(currentCity);
                 if (donnees != null){
 //                    manageNotifications();
+
                 }
             }
         });
@@ -124,15 +158,15 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                PopulateListItem();
+                PopulateListItem("");
                 if (donnees != null){
 //                    manageNotifications();
+
                 }
 
             }
         }, 0);
 
-        // Notification management
 
     }
 
@@ -185,6 +219,36 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void getCITYES() {
+        String url = "https://www.prevision-meteo.ch/services/json/list-cities";
+        final RequestQueue queue = Volley.newRequestQueue(this);
+        final StringRequest request = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        if(response.contains("errors")){
+                        } else{
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                cities = new String[jsonObject.length()];
+                                for(int i = 0; i<jsonObject.length(); i++){
+                                    cities[i] = StringUtils.capitalize(jsonObject.getJSONObject(String.valueOf(i)).getString("url"));
+                                    System.out.println(jsonObject.getJSONObject(String.valueOf(i)).getString("url"));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+        queue.add(request);
+    }
 
     private void callWebService(String cityName){
         String url = "";
@@ -235,51 +299,62 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void PopulateListItem(){
-        refreshLayout.setRefreshing(true);
-        // récupération de la position
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        // Si on a pas la permission de localisation
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            callWebService(null);
-        } else { // Sinon
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
-                                List<Address> addresses = null;
-                                try {
-                                    addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                                } catch (IOException e) {
+    private void PopulateListItem(String City){
+        if(City.length() == 0) {
+            refreshLayout.setRefreshing(true);
+            // récupération de la position
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            // Si on a pas la permission de localisation
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                callWebService(null);
+            } else { // Sinon
+                fusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations this can be null.
+                                if (location != null) {
+                                    Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
+                                    List<Address> addresses = null;
+                                    try {
+                                        addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                                    } catch (IOException e) {
 
-                                }
-                                if (addresses != null && addresses.size() > 0) {
-                                    currentCity=addresses.get(0).getLocality();
-                                    currentCity = currentCity.replace(" ", "-");
-                                    currentCity = currentCity.replace("'", "-");
+                                    }
+                                    if (addresses != null && addresses.size() > 0) {
+                                        currentCity = addresses.get(0).getLocality();
+                                        currentCity = currentCity.replace(" ", "-");
+                                        currentCity = currentCity.replace("'", "-");
 
-                                    System.out.println("City name : " + currentCity);
+                                        System.out.println("City name : " + currentCity);
 
-                                    activityTitleTV.setText( currentCity);
-                                    callWebService(currentCity);
-                                }
-                                else {
-                                    currentCity = "Grenoble";
+                                        activityTitleTV.setText(currentCity);
+                                        callWebService(currentCity);
+                                        popup.getMenu().add(currentCity);
+
+
+                                    } else {
+                                        currentCity = "Grenoble";
+                                        callWebService(null);
+                                    }
+                                } else {
                                     callWebService(null);
                                 }
                             }
-                            else {
-                                callWebService(null);
-                            }
-                        }
-                    });
-        }
-        adapter.notifyDataSetChanged();
+                        });
+            }
+            adapter.notifyDataSetChanged();
 
-        refreshLayout.setRefreshing(false);
+            refreshLayout.setRefreshing(false);
+
+
+        } else {
+            refreshLayout.setRefreshing(true);
+            activityTitleTV.setText(currentCity);
+            callWebService(currentCity);
+            refreshLayout.setRefreshing(false);
+        }
+
     }
 
     private void setUpActionBar(ActionBar actionBar) {
@@ -290,10 +365,41 @@ public class MainActivity extends AppCompatActivity {
         View customActionBarView = layoutInflater.inflate(R.layout.actionbar, null);
 
 
+
         // this view is used to show tile
         activityTitleTV = (TextView) customActionBarView.findViewById(R.id.custom_actionbar_titleText_tv);
         activityTitleTV.setText("Grenoble");
         activityTitleTV.setGravity(Gravity.CENTER);
+
+
+        final ImageView button = (ImageView) customActionBarView.findViewById(R.id.switch_city);
+        button.setVisibility(View.VISIBLE);
+
+        //Creating the instance of PopupMenu
+        popup = new PopupMenu(MainActivity.this, button);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.city_menu, popup.getMenu());
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                popup.show();
+
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        currentCity = item.getTitle().toString();
+                        PopulateListItem(currentCity);
+                        Toast.makeText(MainActivity.this,"Vous avez selectionné : " + item.getTitle(), Toast.LENGTH_SHORT).show();
+                        popup.dismiss();
+                        return true;
+                    }
+                });
+
+            }
+        });//closing the setOnClickListener method
+
 
         //this view can be used for back navigation
         ImageView backToRecorderIV = (ImageView) customActionBarView.findViewById(R.id.custom_actionbar_back_iv);
@@ -308,9 +414,63 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        ImageView addCity = (ImageView) customActionBarView.findViewById(R.id.add_city);
+        addCity.setVisibility(View.VISIBLE);
+        addCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.add_city:
+                        //drawer.openDrawer(GravityCompat.START);
+                        System.out.println("$$$$$$$$**************** Pressed");
+                        openDialog();
+                        break;
+                }
+            }
+        });
+
 
         actionBar.setCustomView(customActionBarView);
         actionBar.setDisplayShowCustomEnabled(true);
+
+    }
+    public void openDialog() {
+        final Dialog dialog = new Dialog(this); // Context, this, etc.
+
+
+        dialog.setContentView(R.layout.dialog_demo);
+
+        final AutoCompleteTextView editTextView = dialog.findViewById(R.id.autoComplete);
+        ArrayAdapter<String> adapterCity = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cities);
+        editTextView.setAdapter(adapterCity);
+
+        dialog.setTitle("Ajouter une ville à votre application");
+        dialog.show();
+
+        Button bt_yes = (Button)dialog.findViewById(R.id.dialog_ok);
+        Button bt_no = (Button)dialog.findViewById(R.id.dialog_cancel);
+
+        bt_yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ;
+                System.out.println(editTextView.getText());
+                currentCity = editTextView.getText().toString();
+                PopulateListItem(editTextView.getText().toString());
+                Toast.makeText(MainActivity.this, currentCity + " a été ajouté", Toast.LENGTH_SHORT).show();
+                popup.getMenu().add(currentCity);
+                dialog.dismiss();
+
+            }
+        });
+        bt_no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
     }
 
     @Override
