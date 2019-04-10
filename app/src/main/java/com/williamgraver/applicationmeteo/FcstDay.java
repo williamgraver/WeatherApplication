@@ -21,14 +21,13 @@ public class FcstDay implements Parcelable {
         return hours;
     }
 
-    public List<HourData> getHoursFrom(int hour){
-        List<HourData> hours= new ArrayList<>();
+    public List<HourData> getHoursFrom(int hour) {
+        List<HourData> hours = new ArrayList<>();
         if (hour >= 24) return hours;
 
-        for(int i=hour; i<24; i++){
-            hours.add (this.hours.get(i));
+        for (int i = hour; i < 24; i++) {
+            hours.add(this.hours.get(i));
         }
-        System.out.print("Nombre d'items" + hours.size());
         return hours;
     }
 
@@ -108,9 +107,9 @@ public class FcstDay implements Parcelable {
         this.icon_big = icon_big;
     }
 
-    public FcstDay(JSONObject jsonObject){
+    public FcstDay(JSONObject jsonObject) {
         try {
-            date= new SimpleDateFormat("dd.MM.yyyy").parse(jsonObject.optString("date"));
+            date = new SimpleDateFormat("dd.MM.yyyy").parse(jsonObject.optString("date"));
             day_short = jsonObject.optString("day_short");
             day_long = jsonObject.optString("day_long");
             tmin = jsonObject.optString("tmin");
@@ -119,11 +118,9 @@ public class FcstDay implements Parcelable {
             condition_key = jsonObject.optString("condition_key");
             icon = jsonObject.optString("icon");
             icon_big = jsonObject.optString("icon_big");
-            System.out.println("====================> ********$$$$$$");
-            System.out.println(jsonObject);
 
 
-            if(!(this instanceof CurrentCondition)){
+            if (!(this instanceof CurrentCondition)) {
                 hours = new ArrayList<>();
                 getHours(new JSONObject(jsonObject.getString("hourly_data")));
             }
@@ -184,10 +181,10 @@ public class FcstDay implements Parcelable {
         in.readList(hours, HourData.class.getClassLoader());
     }
 
-    protected void getHours(JSONObject hourdata){
-        for(int i=0; i<= 23; i++){
+    protected void getHours(JSONObject hourdata) {
+        for (int i = 0; i <= 23; i++) {
             try {
-                HourData hourData = new HourData(i + "H00" ,new JSONObject(hourdata.getString(i+ "H00")));
+                HourData hourData = new HourData(i + "H00", new JSONObject(hourdata.getString(i + "H00")));
                 hours.add(hourData);
             } catch (JSONException e) {
                 e.printStackTrace();

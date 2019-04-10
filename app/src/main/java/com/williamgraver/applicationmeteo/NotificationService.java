@@ -53,6 +53,7 @@ public class NotificationService extends JobIntentService {
     // Unique Identification Number for the Notification.
     // We use it on Notification start, and to cancel it.
     private int NOTIFICATION = R.string.service_started;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -72,7 +73,7 @@ public class NotificationService extends JobIntentService {
 
     @Override
     public void onCreate() {
-        mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         createNotificationChannel();
     }
@@ -111,7 +112,7 @@ public class NotificationService extends JobIntentService {
         // Set the info for the views that show in the notification panel.
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_cloud_blue_24dp)
-                .setContentTitle(currentCity + " : " + donnees.currentCondition.getTmp() +"°C")
+                .setContentTitle(currentCity + " : " + donnees.currentCondition.getTmp() + "°C")
                 .setContentText(donnees.currentCondition.condition)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(contentIntent)
@@ -138,7 +139,7 @@ public class NotificationService extends JobIntentService {
         }
     }
 
-    private void getLocation(){
+    private void getLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             callWebService(null);
         } else { // Sinon
@@ -190,7 +191,9 @@ public class NotificationService extends JobIntentService {
         return false;
     }
 
-    /** Checks whether two providers are the same */
+    /**
+     * Checks whether two providers are the same
+     */
     private boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
             return provider2 == null;
@@ -199,13 +202,13 @@ public class NotificationService extends JobIntentService {
     }
 
 
-    private void callWebService(String cityName){
+    private void callWebService(String cityName) {
         String url = "";
-        if (cityName != null && !cityName.isEmpty()){
-            url = "https://www.prevision-meteo.ch/services/json/" + cityName ;
+        if (cityName != null && !cityName.isEmpty()) {
+            url = "https://www.prevision-meteo.ch/services/json/" + cityName;
 
         } else {
-            url= "https://www.prevision-meteo.ch/services/json/grenoble";
+            url = "https://www.prevision-meteo.ch/services/json/grenoble";
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -214,8 +217,8 @@ public class NotificationService extends JobIntentService {
                     @Override
                     public void onResponse(String response) {
                         //homeText.setText(response);
-                       donnees = new DonneesMeteos(response);
-                       showNotification();
+                        donnees = new DonneesMeteos(response);
+                        showNotification();
 
                     }
                 },
@@ -230,8 +233,7 @@ public class NotificationService extends JobIntentService {
         queue.add(request);
     }
 
-    public class MyLocationListener implements LocationListener
-    {
+    public class MyLocationListener implements LocationListener {
 
         public void onLocationChanged(final Location loc) {
             if (isBetterLocation(loc, previousBestLocation)) {
@@ -240,7 +242,7 @@ public class NotificationService extends JobIntentService {
                 final Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
                 try {
                     List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-                    currentCity=addresses.get(0).getLocality();
+                    currentCity = addresses.get(0).getLocality();
                     currentCity = currentCity.replace(" ", "-");
                     currentCity = currentCity.replace("'", "-");
                     callWebService(currentCity);
@@ -253,20 +255,18 @@ public class NotificationService extends JobIntentService {
 
             }
         }
-        public void onProviderDisabled(String provider)
-        {
+
+        public void onProviderDisabled(String provider) {
             Log.d("Provider", " No provider");
         }
 
 
-        public void onProviderEnabled(String provider)
-        {
+        public void onProviderEnabled(String provider) {
             Log.d("Provider", "provider enabled");
         }
 
 
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
+        public void onStatusChanged(String provider, int status, Bundle extras) {
 
         }
 

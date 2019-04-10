@@ -33,7 +33,7 @@ public class MeteoAdapter extends ArrayAdapter<FcstDay> {
 
     public MeteoAdapter(@NonNull Context context, int resource) {
         super(context, resource);
-        this.context= context;
+        this.context = context;
         fcstDays = new ArrayList<>();
     }
 
@@ -43,7 +43,7 @@ public class MeteoAdapter extends ArrayAdapter<FcstDay> {
     }
 
     @Override
-    public int getCount(){
+    public int getCount() {
         return fcstDays.size();
     }
 
@@ -56,51 +56,52 @@ public class MeteoAdapter extends ArrayAdapter<FcstDay> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         // retourne null dans le cas du currentCondition
-        if(position == 0) return new View(context);
+        if (position == 0) return new View(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         FcstDay dayToShow = getItem(position);
         View rowView = null;
-
-        if(position == 1){
+        if (dayToShow == null) return new View(context);
+        // Si on est sur le deuxième element qui correspond aux détails du jour actuel
+        if (position == 1) {
             rowView = inflater.inflate(R.layout.detailweather_item, parent, false);
-            TextView tvConditions = (TextView)rowView.findViewById(R.id.conditions);
-            TextView tvTemperature = (TextView)rowView.findViewById(R.id.temperature);
-            TextView tvWind = (TextView)rowView.findViewById(R.id.wind);
-            ImageView windImage = (ImageView)rowView.findViewById(R.id.winddirection);
-            ImageView weatherImage = (ImageView)rowView.findViewById(R.id.actualDayImg);
-            ListView listDetail = (ListView)rowView.findViewById(R.id.detailList);
-            CurrentCondition currentCondition =(CurrentCondition) getItem(0);
+            TextView tvConditions = (TextView) rowView.findViewById(R.id.conditions);
+            TextView tvTemperature = (TextView) rowView.findViewById(R.id.temperature);
+            TextView tvWind = (TextView) rowView.findViewById(R.id.wind);
+            ImageView windImage = (ImageView) rowView.findViewById(R.id.winddirection);
+            ImageView weatherImage = (ImageView) rowView.findViewById(R.id.actualDayImg);
+            ListView listDetail = (ListView) rowView.findViewById(R.id.detailList);
+            CurrentCondition currentCondition = (CurrentCondition) getItem(0);
 
             tvConditions.setText(currentCondition.condition);//currentCondition.icon_big);//
             tvTemperature.setText("Temperature : " + currentCondition.tmp + "°C");
             Glide.with(context).load(currentCondition.icon_big).into(weatherImage);
             Integer currentHour = new Date().getHours();
-            if((currentCondition.wnd_spd != null) && currentCondition.wnd_spd != "0") {
+            if ((currentCondition.wnd_spd != null) && currentCondition.wnd_spd != "0") {
                 windImage.setVisibility(View.VISIBLE);
-                windImage.setRotation( Float.parseFloat(dayToShow.getHours().get(currentHour).getWinddegre()));
-                TextView windText = (TextView)rowView.findViewById(R.id.wind);
+                windImage.setRotation(Float.parseFloat(dayToShow.getHours().get(currentHour).getWinddegre()));
+                TextView windText = (TextView) rowView.findViewById(R.id.wind);
 
-                windText.setText(currentCondition.wnd_spd +" km/h " + currentCondition.wnd_dir);
+                windText.setText(currentCondition.wnd_spd + " km/h " + currentCondition.wnd_dir);
             }
 
-
+            // On rajoute le détail pour chaque heure
             RecyclerView recyclerView = (RecyclerView) rowView.findViewById(R.id.detailList);
-            LinearLayoutManager layoutManager= new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(new HourAdapater(dayToShow.getHoursFrom(currentHour + 1)));
-        } else{
+        } else {
 
 
             rowView = inflater.inflate(R.layout.listview_item, parent, false);
             // JOURS ET DATE
-            TextView tvDay = (TextView)rowView.findViewById(R.id.weatherday);
-            TextView tvDate = (TextView)rowView.findViewById(R.id.weatherdate);
+            TextView tvDay = (TextView) rowView.findViewById(R.id.weatherday);
+            TextView tvDate = (TextView) rowView.findViewById(R.id.weatherdate);
             //
-            TextView tvUpTemp = (TextView)rowView.findViewById(R.id.uppertemperature);
-            TextView tvDownTemp = (TextView)rowView.findViewById(R.id.lowertemperature);
+            TextView tvUpTemp = (TextView) rowView.findViewById(R.id.uppertemperature);
+            TextView tvDownTemp = (TextView) rowView.findViewById(R.id.lowertemperature);
 
-            ImageView weatherImage = (ImageView)rowView.findViewById(R.id.weatherimage);
-            ImageView windImage = (ImageView)rowView.findViewById(R.id.windimage);
+            ImageView weatherImage = (ImageView) rowView.findViewById(R.id.weatherimage);
+            ImageView windImage = (ImageView) rowView.findViewById(R.id.windimage);
 
 
             tvDay.setText(dayToShow.getDay_long());
@@ -115,7 +116,7 @@ public class MeteoAdapter extends ArrayAdapter<FcstDay> {
             Glide.with(context).load(dayToShow.icon).into(weatherImage);
         }
 
-        return  rowView;
+        return rowView;
     }
 
     @Override

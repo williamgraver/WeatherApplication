@@ -8,7 +8,7 @@ import org.json.JSONObject;
 public class HourData implements Parcelable {
     String hour, icon, condition, temperature, winddirection, windspeed, winddegre;
 
-    public HourData(String hour,JSONObject json){
+    public HourData(String hour, JSONObject json) {
         this.hour = hour;
         icon = json.optString("ICON");
         condition = json.optString("CONDITION");

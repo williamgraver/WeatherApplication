@@ -10,8 +10,8 @@
             android:id="@+id/menu_home"
             android:checkable="true"
             android:enabled="true"
-            android:icon="@drawable/ic_home_black_24dp"
-            android:title="@string/accueil"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/properties_menu_view"
             android:visible="true">
 
         </item>

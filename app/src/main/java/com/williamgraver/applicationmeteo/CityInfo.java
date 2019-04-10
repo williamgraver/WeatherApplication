@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 public class CityInfo implements Parcelable {
     String name, country, sunrise, sunset;
-    double latitude, longitude,elevation;
+    double latitude, longitude, elevation;
 
 
     public CityInfo(JSONObject jsonObject) throws JSONException {

@@ -13,10 +13,10 @@ public class CurrentCondition extends FcstDay implements Parcelable {
     Date date;
     String hour, tmp, wnd_spd, wnd_gust, wnd_dir, pressure, humidity;
 
-    public  CurrentCondition(JSONObject jsonObject) throws JSONException {
+    public CurrentCondition(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
         try {
-            date= new SimpleDateFormat("dd.MM.yyyy").parse(jsonObject.getString("date"));
+            date = new SimpleDateFormat("dd.MM.yyyy").parse(jsonObject.getString("date"));
         } catch (ParseException e) {
             e.printStackTrace();
         }

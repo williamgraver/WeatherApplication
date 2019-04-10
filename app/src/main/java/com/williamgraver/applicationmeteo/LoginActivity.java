@@ -112,11 +112,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 .build();
         GoogleSignInAccount account = null;
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        Intent t =getIntent();
+        Intent t = getIntent();
         boolean logoutGoogle = t.getBooleanExtra("LogoutGoogle", false);
         if (logoutGoogle) {
             mGoogleSignInClient.signOut();
-        }else {
+        } else {
             account = GoogleSignIn.getLastSignedInAccount(this);
         }
 
@@ -169,12 +169,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w( "ERRORCO", "signInResult:failed code=" + e.getStatusCode());
+            Log.w("ERRORCO", "signInResult:failed code=" + e.getStatusCode());
             updateUI(null);
         }
     }
+
     private void updateUI(GoogleSignInAccount account) {
-        if (account != null){
+        if (account != null) {
 
             showProgress(true);
             Intent t = new Intent(this, MainActivity.class);
@@ -187,7 +188,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (!mayRequestContacts()) {
             return;
         }
-        if (!mayRequestPosition()){
+        if (!mayRequestPosition()) {
             return;
         }
 
@@ -237,6 +238,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
         return false;
     }
+
     /**
      * Callback received when a permissions request has been completed.
      */

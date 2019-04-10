@@ -25,8 +25,7 @@ public class BootDeviceReceiver extends BroadcastReceiver {
 
         Log.d(TAG_BOOT_BROADCAST_RECEIVER, action);
 
-        if(Intent.ACTION_BOOT_COMPLETED.equals(action))
-        {
+        if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
             //startServiceDirectly(context);
 
             startServiceByAlarm(context, NotificationService.class);
@@ -36,8 +35,7 @@ public class BootDeviceReceiver extends BroadcastReceiver {
     }
 
     /* Start RunAfterBootService service directly and invoke the service every 10 seconds. */
-    private void startServiceDirectly(Context context)
-    {
+    private void startServiceDirectly(Context context) {
         try {
             while (true) {
                 String message = "BootDeviceReceiver onReceive start service directly.";
@@ -53,18 +51,16 @@ public class BootDeviceReceiver extends BroadcastReceiver {
                 // Current thread will sleep one second.
                 Thread.sleep(10000);
             }
-        }catch(InterruptedException ex)
-        {
+        } catch (InterruptedException ex) {
             Log.e(TAG_BOOT_BROADCAST_RECEIVER, ex.getMessage(), ex);
         }
     }
 
     /* Create an repeat Alarm that will invoke the background service for each execution time.
      * The interval time can be specified by your self.  */
-    private void startServiceByAlarm(Context context, Class c)
-    {
+    private void startServiceByAlarm(Context context, Class c) {
         // Get alarm manager.
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         // Create intent to invoke the background service.
         Intent intent = new Intent(context, c);
@@ -72,7 +68,7 @@ public class BootDeviceReceiver extends BroadcastReceiver {
 
 
         long startTime = System.currentTimeMillis();
-        long intervalTime = 60*1000*5;
+        long intervalTime = 60 * 1000 * 5;
 
         String message = "Start service use repeat alarm. ";
 

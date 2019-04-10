@@ -4,6 +4,6 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="active_dots">#fffafa</color>
+    <color name="active_dots">#FFFAFA</color>
     <color name="incative_dots">#83878b</color>
 </resources>

@@ -29,21 +29,21 @@ public class DetailsActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
-        Intent t= getIntent();
-        FcstDay day = (FcstDay)t.getParcelableExtra("fcstDay");
+        Intent t = getIntent();
+        FcstDay day = (FcstDay) t.getParcelableExtra("fcstDay");
         String currentDay = t.getStringExtra("DayName");
         String cityName = t.getStringExtra("cityName");
 
 
         // JOURS ET DATE
-        TextView tvDay = (TextView)findViewById(R.id.weatherday);
-        TextView tvDate = (TextView)findViewById(R.id.weatherdate);
+        TextView tvDay = (TextView) findViewById(R.id.weatherday);
+        TextView tvDate = (TextView) findViewById(R.id.weatherdate);
         //
-        TextView tvUpTemp = (TextView)findViewById(R.id.uppertemperature);
-        TextView tvDownTemp = (TextView)findViewById(R.id.lowertemperature);
+        TextView tvUpTemp = (TextView) findViewById(R.id.uppertemperature);
+        TextView tvDownTemp = (TextView) findViewById(R.id.lowertemperature);
 
-        ImageView weatherImage = (ImageView)findViewById(R.id.weatherimage);
-        ImageView windImage = (ImageView)findViewById(R.id.windimage);
+        ImageView weatherImage = (ImageView) findViewById(R.id.weatherimage);
+        ImageView windImage = (ImageView) findViewById(R.id.windimage);
 
 
         tvDay.setText(day.getDay_long());
@@ -58,22 +58,16 @@ public class DetailsActivity extends AppCompatActivity {
         Glide.with(this).load(day.icon_big).into(weatherImage);
 
 
-
-
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.detailItem);
-        LinearLayoutManager layoutManager= new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new HourAdapater(day.getHours()));
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         finish();
     }
-//    public boolean onOptionsItemSelected(boolean test) {
-//        finish();
-//       return false;
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

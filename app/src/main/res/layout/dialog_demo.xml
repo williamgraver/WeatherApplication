@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cin"
     android:layout_width="match_parent"
@@ -8,7 +9,10 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_margin="10dp"
+        android:paddingTop="10dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/dialog_info"
@@ -26,13 +30,13 @@
                 android:id="@+id/autoComplete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Entrer un nom de ville"
-                android:completionThreshold="1"
                 android:completionHint="Choisir ville"
+                android:completionThreshold="1"
+                android:hint="@string/hint_cityname_popup"
                 tools:layout_conversion_absoluteHeight="16dp"
-                tools:layout_editor_absoluteY="39dp"
+                tools:layout_conversion_absoluteWidth="411dp"
                 tools:layout_editor_absoluteX="0dp"
-                tools:layout_conversion_absoluteWidth="411dp" />
+                tools:layout_editor_absoluteY="39dp" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -46,16 +50,19 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.50"
-                android:background="@color/colorPrimaryDark"
-                android:text="Annuler" />
+                android:background="@color/colorPrimary"
+                android:text="@string/cancel_button"
+                android:textColor="@color/active_dots"
+                android:layout_marginRight="0.1dp"/>
 
             <Button
                 android:id="@+id/dialog_ok"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.50"
-                android:background="@color/colorPrimaryDark"
-                android:text="Ajouter" />
+                android:background="@color/colorPrimary"
+                android:text="Ajouter"
+                android:textColor="@color/active_dots" />
 
 
         </LinearLayout>

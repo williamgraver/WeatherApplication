@@ -60,7 +60,6 @@ public class MeteoWidget extends AppWidgetProvider {
         //built intent to call service
         Intent intent=new Intent(context.getApplicationContext(),WidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,allWidgetIds);
-        //intent.putExtra("WidgetId", appWidgetId);
         Log.w("LOG","before service");
         //update widget via service
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -68,7 +67,6 @@ public class MeteoWidget extends AppWidgetProvider {
         } else{
             context.startService(intent);
         }
-        //appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
@@ -137,6 +135,13 @@ public class MeteoWidget extends AppWidgetProvider {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         }
 
+        /**
+         * Au
+         * @param intent
+         * @param flags
+         * @param startId
+         * @return
+         */
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
             getLocation();
@@ -169,9 +174,11 @@ public class MeteoWidget extends AppWidgetProvider {
 
         }
 
+        /**
+         * Met a jour la vue du widget avec les donnees actuelles
+         */
         public void updateInterface(){
             ComponentName thisWidget=new ComponentName(getApplicationContext(),MeteoWidget.class);
-            int []allWidgetIds2=appWidgetManager.getAppWidgetIds(thisWidget);
 
             Log.w("Widget","Trying to update Widget");
 

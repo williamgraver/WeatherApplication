@@ -13,22 +13,22 @@ public class DetailItemHolder extends RecyclerView.ViewHolder {
 
     public DetailItemHolder(@NonNull View itemView) {
         super(itemView);
-        rowView =itemView;
+        rowView = itemView;
     }
 
-    public void bind(HourData hour){
+    public void bind(HourData hour) {
 
-        TextView tvHour = (TextView)rowView.findViewById(R.id.hourTv);
-        TextView tvTemperature = (TextView)rowView.findViewById(R.id.temperatureDetail);
-        TextView tvWind = (TextView)rowView.findViewById(R.id.windspeed);
+        TextView tvHour = (TextView) rowView.findViewById(R.id.hourTv);
+        TextView tvTemperature = (TextView) rowView.findViewById(R.id.temperatureDetail);
+        TextView tvWind = (TextView) rowView.findViewById(R.id.windspeed);
 
-        ImageView imgCondition = (ImageView)rowView.findViewById(R.id.conditionImg);
-        ImageView imgWind = (ImageView)rowView.findViewById(R.id.windImage);
+        ImageView imgCondition = (ImageView) rowView.findViewById(R.id.conditionImg);
+        ImageView imgWind = (ImageView) rowView.findViewById(R.id.windImage);
 
 
         tvHour.setText(hour.getHour());
-        tvTemperature.setText(hour.getTemperature() +"°C");
-        tvWind.setText(hour.getWindspeed()+ "km/h");
+        tvTemperature.setText(hour.getTemperature() + "°C");
+        tvWind.setText(hour.getWindspeed() + "km/h");
 
         imgWind.setRotation(Float.parseFloat(hour.getWinddegre()));
         Glide.with(imgCondition.getContext()).load(hour.getIcon()).into(imgCondition);

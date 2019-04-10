@@ -15,7 +15,7 @@ public class DonneesMeteos implements Parcelable {
     FcstDay fcstDay_0, fcstDay_1, fcstDay_2, fcstDay_3, fcstDay_4;
     ForecastInfo forecastInfo;
 
-    public DonneesMeteos(String json){
+    public DonneesMeteos(String json) {
         try {
             JSONObject jsonObject = new JSONObject(json);
 
